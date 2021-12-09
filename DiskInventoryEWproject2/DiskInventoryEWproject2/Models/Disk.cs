@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -14,11 +15,16 @@ namespace DiskInventoryEWproject2.Models
         }
 
         public int CdId { get; set; }
-        public string CdName { get; set; }
-        public DateTime ReleaseDate { get; set; }
-        public int DiskTypeId { get; set; }
-        public int StatusId { get; set; }
-        public int GenreId { get; set; }
+        [Required(ErrorMessage = "Please enter a disk/media name.")]
+        public string? CdName { get; set; }
+        [Required(ErrorMessage = "Please enter a release date.")]
+        public DateTime? ReleaseDate { get; set; }
+        [Required(ErrorMessage = "Please select a GENRE.")]
+        public int? GenreId { get; set; }
+        [Required(ErrorMessage = "Please select a DISK TYPE.")]
+        public int? DiskTypeId { get; set; }
+        [Required(ErrorMessage = "Please select a STATUS.")]
+        public int? StatusId { get; set; }
 
         public virtual DiskType DiskType { get; set; }
         public virtual Genre Genre { get; set; }

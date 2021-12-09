@@ -21,11 +21,11 @@ namespace DiskInventoryEWproject2.Models
         }
 
         public int BorrowerId { get; set; }
-        [Required]
-        public string Lname { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please enter a FIRST name.")]
         public string Fname { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please enter a LAST name.")]
+        public string Lname { get; set; }
+        [Required(ErrorMessage = "Please enter a phone number.")]
         public string PhoneNum { get; set; }
 
         public virtual ICollection<DiskHasBorrower> DiskHasBorrowers { get; set; }

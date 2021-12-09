@@ -1,6 +1,7 @@
 ﻿/*************************************************************************************
 *  DATE:            NAME:       DESCRIPTION:
 *  12-3-2021        Emma        Initial deployment of DiskHasBorrower controller & index view.
+*  12-6-2021        Emma        Add stored procedure calls to insert/update tables.
 *************************************************************************************/
 
 
@@ -52,15 +53,33 @@ namespace DiskInventoryEWproject2.Controllers
         {
             if (ModelState.IsValid)
             {
+                string returnedDate = diskhasborrower.ReturnedDate.ToString();
+                returnedDate = (returnedDate == "") ? null : diskhasborrower.ReturnedDate.ToString();
+
                 if (diskhasborrower.DiskHasBorrowerId == 0)   // means add the borrower
                 {
-                    context.DiskHasBorrowers.Add(diskhasborrower);
+                    //context.DiskHasBorrowers.Add(diskhasborrower);
+                    context.Database.ExecuteSqlRaw("execute sp_ins_disk_has_borrower @p0, @p1, @p2, @p3",
+                        parameters: new[] { diskhasborrower.BorrowerId.ToString(), 
+                                            diskhasborrower.CdId.ToString(), 
+                                            diskhasborrower.BorrowedDate.ToString(),
+                                            //diskhasborrower.ReturnedDate.ToString() 
+                                            returnedDate
+                                            });
                 }
                 else                       // means update the borrower
                 {
-                    context.DiskHasBorrowers.Update(diskhasborrower);
+                    //context.DiskHasBorrowers.Update(diskhasborrower);
+                    context.Database.ExecuteSqlRaw("execute sp_upd_disk_has_borrower @p0, @p1, @p2, @p3, @p4",
+                        parameters: new[] { diskhasborrower.DiskHasBorrowerId.ToString(),
+                                            diskhasborrower.BorrowerId.ToString(),
+                                            diskhasborrower.CdId.ToString(),
+                                            diskhasborrower.BorrowedDate.ToString(),
+                                            //diskhasborrower.ReturnedDate.ToString()
+                                            returnedDate
+                                            });
                 }
-                context.SaveChanges();
+                //context.SaveChanges();
                 return RedirectToAction("Index", "DiskHasBorrower");
             }
             else

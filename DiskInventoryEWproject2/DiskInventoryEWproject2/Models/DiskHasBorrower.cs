@@ -15,9 +15,9 @@ namespace DiskInventoryEWproject2.Models
     {
         public int DiskHasBorrowerId { get; set; }
         [Required(ErrorMessage = "Please choose a disk/media type.")]
-        public int? BorrowerId { get; set; }
-        [Required(ErrorMessage = "Please choose a borrower.")]
         public int? CdId { get; set; }
+        [Required(ErrorMessage = "Please choose a borrower.")]
+        public int? BorrowerId { get; set; }
         [Required(ErrorMessage = "Please enter a borrowed date.")]
         public DateTime BorrowedDate { get; set; }
         public DateTime? ReturnedDate { get; set; }

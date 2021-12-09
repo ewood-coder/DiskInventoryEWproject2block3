@@ -2,6 +2,7 @@
 *  DATE:            NAME:       DESCRIPTION:
 *  11-12-2021       Emma        Initial deployment of DISK controller & index view.
 *  11-19-2021       Emma        Added more post and get methods.
+*  12-6-2021        Emma        Add stored procedure calls to insert/update/delete tables.
 *************************************************************************************/
 
 
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiskInventoryEWproject2.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiskInventoryEWproject2.Controllers
 {
@@ -23,7 +25,7 @@ namespace DiskInventoryEWproject2.Controllers
         }
         public IActionResult Index()
         {
-            List<Disk> disks = context.Disks.OrderBy(c => c.CdId).ThenBy(c => c.CdName).ThenBy(c => c.ReleaseDate).ThenBy(c => c.GenreId).ThenBy(c => c.StatusId).ThenBy(c => c.DiskTypeId).ToList();
+            List<Disk> disks = context.Disks.OrderBy(c => c.CdName).Include(c => c.Genre).Include(c => c.Status).Include(c => c.DiskType).ToList();
             return View(disks);
         }
         public IActionResult Add()
@@ -54,13 +56,28 @@ namespace DiskInventoryEWproject2.Controllers
             {
                 if (disk.CdId == 0)   // means add the artist
                 {
-                    context.Disks.Add(disk);
+                    //context.Disks.Add(disk);
+                    context.Database.ExecuteSqlRaw("execute sp_ins_disk @p0, @p1, @p2, @p3, @p4",
+                        parameters: new[] { disk.CdName,
+                                            disk.ReleaseDate.ToString(),
+                                            disk.DiskTypeId.ToString(),
+                                            disk.StatusId.ToString(),
+                                            disk.GenreId.ToString()
+                                            });
                 }
                 else                       // means update the artist
                 {
-                    context.Disks.Update(disk);
+                    //context.Disks.Update(disk);
+                    context.Database.ExecuteSqlRaw("execute sp_upd_disk @p0, @p1, @p2, @p3, @p4, @p5",
+                        parameters: new[] { disk.CdId.ToString(),
+                                            disk.CdName,
+                                            disk.ReleaseDate.ToString(),
+                                            disk.DiskTypeId.ToString(),
+                                            disk.StatusId.ToString(),
+                                            disk.GenreId.ToString()
+                                            });
                 }
-                context.SaveChanges();
+                //context.SaveChanges();
                 return RedirectToAction("Index", "Disk");
             }
             else
@@ -81,8 +98,10 @@ namespace DiskInventoryEWproject2.Controllers
         [HttpPost]
         public IActionResult Delete(Disk disk)
         {
-            context.Disks.Remove(disk);
-            context.SaveChanges();
+            //context.Disks.Remove(disk);
+            //context.SaveChanges();
+            context.Database.ExecuteSqlRaw("execute sp_del_disk @p0",
+                        parameters: new[] { disk.CdId.ToString() });
             return RedirectToAction("Index", "Disk");
         }
     }

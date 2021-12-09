@@ -2,6 +2,7 @@
 *  DATE:            NAME:       DESCRIPTION:
 *  11-12-2021       Emma        Initial deployment of ARTIST controller & index view.
 *  11-19-2021       Emma        Added edit & delete button functions.
+*  12-6-2021        Emma        Add stored procedure calls to insert/update/delete tables.
 *************************************************************************************/
 
 
@@ -24,7 +25,8 @@ namespace DiskInventoryEWproject2.Controllers
         }
         public IActionResult Index()
         {
-            List<Artist> artists = context.Artists.OrderBy(a => a.ArtistName).ToList();
+            //List<Artist> artists = context.Artists.OrderBy(a => a.ArtistName).ToList();
+            var artists = context.Artists.OrderBy(a => a.ArtistName).Include(at => at.ArtistType).ToList();
             return View(artists);
         }
         public IActionResult Add()
@@ -48,13 +50,17 @@ namespace DiskInventoryEWproject2.Controllers
             {
                 if (artist.ArtistId == 0)   // means add the artist
                 {
-                    context.Artists.Add(artist);
+                    //context.Artists.Add(artist);
+                    context.Database.ExecuteSqlRaw("execute sp_ins_artist @p0, @p1",
+                        parameters: new[] { artist.ArtistName, artist.ArtistTypeId.ToString() });
                 }
                 else                       // means update the artist
                 {
-                    context.Artists.Update(artist);
+                    //context.Artists.Update(artist);
+                    context.Database.ExecuteSqlRaw("execute sp_upd_artist @p0, @p1, @p2",
+                        parameters: new[] { artist.ArtistId.ToString(), artist.ArtistName, artist.ArtistTypeId.ToString() });
                 }
-                context.SaveChanges();
+                //context.SaveChanges();
                 return RedirectToAction("Index", "Artist");
             }
             else
@@ -73,8 +79,10 @@ namespace DiskInventoryEWproject2.Controllers
         [HttpPost]
         public IActionResult Delete(Artist artist)
         {
-            context.Artists.Remove(artist);
-            context.SaveChanges();
+            //context.Artists.Remove(artist);
+            //context.SaveChanges();
+            context.Database.ExecuteSqlRaw("execute sp_del_artist @p0",
+                parameters: new[] { artist.ArtistId.ToString() });
             return RedirectToAction("Index", "Artist");
         }
     }

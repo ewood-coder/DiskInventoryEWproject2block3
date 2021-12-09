@@ -23,9 +23,9 @@
             <td>@disk.CdId</td>
             <td>@disk.CdName</td>
             <td>@disk.ReleaseDate</td>
-            <td>@disk.GenreId</td>
-            <td>@disk.StatusId</td>
-            <td>@disk.DiskTypeId</td>
+            <td>@disk.Genre.Description</td>
+            <td>@disk.Status.Description</td>
+            <td>@disk.DiskType.Description</td>
             <td>
                 <a asp-controller="Disk" asp-action="Edit" asp-route-id="@disk.CdId">Edit</a>
                 

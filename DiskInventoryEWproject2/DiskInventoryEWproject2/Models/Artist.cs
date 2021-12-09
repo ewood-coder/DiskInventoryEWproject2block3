@@ -13,11 +13,11 @@ namespace DiskInventoryEWproject2.Models
             DiskHasArtists = new HashSet<DiskHasArtist>();
         }
 
+        [Required(ErrorMessage = "Please enter an artist name.")]
+        public string? ArtistName { get; set; }
         public int ArtistId { get; set; }
-        [Required]
-        public int ArtistTypeId { get; set; }
-        public string ArtistName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please select an artist type.")]
+        public int? ArtistTypeId { get; set; }
 
         public virtual ArtistType ArtistType { get; set; }
         public virtual ICollection<DiskHasArtist> DiskHasArtists { get; set; }
